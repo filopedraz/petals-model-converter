@@ -1,2 +1,7 @@
 *models-*
 *tmp*
+*abb*
+*.json
+*.lock
+*.bin
+*Code*
