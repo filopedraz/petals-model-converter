@@ -7,6 +7,8 @@ from safetensors.torch import save_file
 model_name = "codellama/CodeLlama-34b-Instruct-hf"
 
 model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir="./cache_dir")
+print("Model loaded in Memory.")
+
 model = model.to(torch.bfloat16)
 
 names = list(name for name, _ in model.named_parameters())
