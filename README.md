@@ -18,7 +18,7 @@ number_of_hidden_layers = 48 # You can get this info in the config.json file of 
 python main.py
 ```
 
-## 3. Copy Files
+### 3. Copy Files
 
 When the conversion has been completed, copy the following files from the official model Repository and push the new model in HF.
 
