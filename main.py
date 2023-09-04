@@ -13,7 +13,7 @@ logging.basicConfig(
 )
 
 model_name = "codellama/CodeLlama-34b-Instruct-hf"
-output_folder = "codellama2"
+output_folder = "models/CodeLlama-34b-Instruct-hf"
 number_of_hidden_layers = 48 # TODO get this info from `config.json`
 
 start_time = time.time()
