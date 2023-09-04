@@ -1,5 +1,6 @@
-# petals-model-converter
-Convert any HF Model to Petals Optimized Format
+# Petals Model Converter
+
+Reshard any HF Model for Petals Decentralized Inference Engine.
 
 ## When the conversion has been completed, copy the following files from the official model Repository
 
