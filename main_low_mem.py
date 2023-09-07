@@ -13,14 +13,16 @@ logging.basicConfig(
 )
 
 model_name = "codellama/CodeLlama-34b-Instruct-hf"
+
+input_folder = "models/example/CodeLlama-34b-Instruct-hf"
 output_folder = "models/CodeLlama-34b-Instruct-hf"
 number_of_hidden_layers = 48
 number_of_current_shards = 7
 
-weight_map = {}
-shard_tensors = {f"model_{i + 1:05}-of-000{number_of_hidden_layers+1}.safetensors": {} for i in range(number_of_hidden_layers)}
-shard_tensors[f"model_000{number_of_hidden_layers+1}-of-000{number_of_hidden_layers+1}.safetensors"] = {}
+os.makedirs(output_folder, exist_ok=True)
 
+k = 1
+weight_map = {}
 for i in range(1, number_of_current_shards + 1):
     chunk_url = f"https://huggingface.co/{model_name}/resolve/main/pytorch_model-0000{i}-of-0000{number_of_current_shards}.bin"
     
@@ -31,18 +33,25 @@ for i in range(1, number_of_current_shards + 1):
     chunk = torch.load(buffer, map_location="cpu")
 
     for name, tensor in chunk.items():
-        if name.startswith('model.layers.') and any(str(i) in name for i in range(number_of_hidden_layers)):
-            shard_name = f"model_{int(name.split('.')[2]) + 1:05}-of-000{number_of_hidden_layers+1}.safetensors"
-        else:
-            shard_name = f"model_000{number_of_hidden_layers+1}-of-000{number_of_hidden_layers+1}.safetensors"
-        
-        shard_tensors[shard_name][name] = tensor.to(torch.bfloat16)
-        
-        weight_map[name] = shard_name
-        del tensor
+        print(name)
+        print(tensor.dtype)
+        print(tensor.shape)
+        if name.startswith(f'model.layers.{i}.'):
+            converted_tensor = tensor.to(torch.bfloat16)
+            shard_name = f"model_000{k}-of-000{number_of_hidden_layers+1}.safetensors"
+            save_file({name: converted_tensor}, f"./{output_folder}/{shard_name}", metadata={"format": "pt"})
+            weight_map[name] = shard_name
+
+            k = k + 1
+            
+            del tensor
+            del converted_tensor
 
     del chunk
     logging.debug(f"Processed shard {i} out of {number_of_current_shards}.")
+
+logging.debug(f"Created weight map using {len(weight_map.keys())} blocks.")
+exit()
 
 total_size = sum(p.numel() * 2 for shard in shard_tensors.values() for p in shard.values())
 index = {"metadata": {"total_size": total_size}, "weight_map": weight_map}
