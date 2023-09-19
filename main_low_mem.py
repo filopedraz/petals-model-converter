@@ -11,8 +11,8 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
-input_folder = "models/example/CodeLlama-34b-Instruct-hf"
-output_folder = "models/CodeLlama-34b-Instruct-hf"
+input_folder = "models_in/CodeLlama-34b-Instruct-hf"
+output_folder = "models_out/CodeLlama-34b-Instruct-hf"
 
 number_of_hidden_layers = 48
 number_of_current_shards = 7
